@@ -61,20 +61,21 @@ public class LoginActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
+        // Check if there is userId in "sharedPreferences" object
+        // If yes, then directly go to MainActivity
         sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
         userId = sharedPreferences.getString(UserId, "0");
         if (!TextUtils.equals(userId, "0")) {
-
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
             main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(main);
             finish();
-
-
         }
 
+        // Firebase Authentication instance
         mAuth = FirebaseAuth.getInstance();
 
+        // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -82,25 +83,36 @@ public class LoginActivity extends AppCompatActivity {
         mSignInClient = GoogleSignIn.getClient(this, gso);
 
 
+        // Go to Sign Up page
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnSignUp = findViewById(R.id.btnRegister);
+        // How does v-> works?
         btnSignUp.setOnClickListener(v -> {
             Intent signup = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(signup);
         });
+
+        // Go to Forgot page
         tvForgot = findViewById(R.id.tvForgot);
+        // How does v-> works?
         tvForgot.setOnClickListener(v -> {
             Intent forgot = new Intent(LoginActivity.this, ForgotActivity.class);
             startActivity(forgot);
         });
+
+        // Click on Google Login button
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         btnGoogleLogin.setOnClickListener(view -> signIn());
+
+        // Click on Email Login button
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(v -> {
 
             email = etEmail.getText().toString();
             password = etPassword.getText().toString();
+
+            // Empty error message
             if (TextUtils.isEmpty(email)) {
                 etEmail.setError("This field is empty !");
                 return;
@@ -109,6 +121,8 @@ public class LoginActivity extends AppCompatActivity {
                 etPassword.setError("This field is empty !");
                 return;
             }
+
+            // Check in firebase database
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -119,11 +133,14 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (TextUtils.equals(user.getEmail(), email)) {
 
+                            // This will then used by MainActivity.java
+                            // Store userid, mobile and name
                             sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(UserId, user.getUserId());
                             editor.putString(Const.Mobile, user.getMobile());
                             editor.putString(Const.Name, user.getName());
+                            editor.putString(Const.Email, user.getEmail());
                             editor.apply();
 
                             mAuth.signInWithEmailAndPassword(email, password)
@@ -132,29 +149,23 @@ public class LoginActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
                                                 // Sign in success, update UI with the signed-in user's information
-                                                //  Log.d(TAG, "signInWithEmail:success");
+                                                // Log.d(TAG, "signInWithEmail:success");
                                                 FirebaseUser user = mAuth.getCurrentUser();
                                                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(i);
                                                 Toast.makeText(LoginActivity.this, "Login successfully",
                                                         Toast.LENGTH_SHORT).show();
                                                 finish();
-
-
                                             } else {
                                                 // If sign in fails, display a message to the user.
                                                 //  Log.w(TAG, "signInWithEmail:failure", task.getException());
                                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                                         Toast.LENGTH_SHORT).show();
-
                                             }
-
-                                            // ...
                                         }
                                     });
-
-
-                        } else {
+                        }
+                        else {
                             Log.e("user", "not here");
                         }
                     }
@@ -171,17 +182,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // want to receive a callback for our own onActivityResult()
     private void signIn() {
         Intent signInIntent = mSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    // This will be called after signIn()
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
+                // Google sign in successful, authenticate with firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
@@ -190,6 +204,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // it is used by onActivityResult()
+    // Google sign in successful, authenticate with firebase
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
