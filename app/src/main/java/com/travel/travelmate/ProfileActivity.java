@@ -42,7 +42,9 @@ public class ProfileActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(v -> {
             // clear the "sharedPreferences" object
-            sharedPreferences.edit().clear().commit();
+            sharedPreferences.edit().clear().apply();
+            // Still need to reset seen_onboard
+            sharedPreferences.edit().putBoolean("seen_onboard", true).apply();
             Intent logout = new Intent(ProfileActivity.this, LoginActivity.class);
             Toast.makeText(ProfileActivity.this, "Logout successfully", Toast.LENGTH_SHORT).show();
             startActivity(logout);
