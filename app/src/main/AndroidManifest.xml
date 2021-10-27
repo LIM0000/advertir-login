@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelMate">
         <activity
+            android:name=".LocationDescriptionActivity"
+            android:exported="false" />
+        <activity
             android:name=".OnBoarding"
             android:exported="true">
             <intent-filter>

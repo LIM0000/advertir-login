@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.travel.travelmate.R;
+import com.travel.travelmate.RecyclerViewClickInterface;
 import com.travel.travelmate.model.RecentsData;
 
 import java.util.List;
@@ -21,11 +23,13 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.RecentsV
 
     Context context;
     List<RecentsData> recentsDataList;
+    private RecyclerViewClickInterface recyclerViewClickInterface;
 
     // Constructor
-    public RecentsAdapter(Context context, List<RecentsData> recentsDataList) {
+    public RecentsAdapter(Context context, List<RecentsData> recentsDataList, RecyclerViewClickInterface recyclerViewClickInterface) {
         this.context = context;
         this.recentsDataList = recentsDataList;
+        this.recyclerViewClickInterface = recyclerViewClickInterface;
     }
 
     @NonNull
@@ -53,7 +57,8 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.RecentsV
         return recentsDataList.size();
     }
 
-    public static final class RecentsViewHolder extends RecyclerView.ViewHolder
+    //public static final class RecentsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public class RecentsViewHolder extends RecyclerView.ViewHolder
     {
         ImageView placeImage;
         TextView placeName, countryName, price;
@@ -68,6 +73,13 @@ public class RecentsAdapter extends RecyclerView.Adapter<RecentsAdapter.RecentsV
             countryName = itemView.findViewById(R.id.country_name);
             price = itemView.findViewById(R.id.price);
             starRating = itemView.findViewById(R.id.star_rating);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewClickInterface.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

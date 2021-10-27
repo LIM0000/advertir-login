@@ -1,6 +1,7 @@
 package com.travel.travelmate;
 
 import static com.travel.travelmate.Const.Name;
+import static com.travel.travelmate.Const.recentsDataList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -15,10 +16,9 @@ import android.os.Bundle;
 import com.travel.travelmate.adapter.RecentsAdapter;
 import com.travel.travelmate.model.RecentsData;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewClickInterface{
 
     AppCompatButton btnProfile;
     AppCompatTextView tvWelcome;
@@ -37,12 +37,7 @@ public class MainActivity extends AppCompatActivity {
         tvWelcome.setText("Welcome " + name + ",");
 
         // Create recent recycler view
-        List<RecentsData> recentsDataList = new ArrayList<>();
-        recentsDataList.add(new RecentsData("Agra", "India", "$200", R.drawable.india_location, 3.5f));
-        recentsDataList.add(new RecentsData("Great Wall of China", "China", "$300", R.drawable.china_location, 4.5f));
-        recentsDataList.add(new RecentsData("Marina Sand Bay", "Singapore", "$400", R.drawable.singapore_location, 4f));
-        recentsDataList.add(new RecentsData("KLCC", "Malaysia", "$500", R.drawable.malaysia_location, 5f));
-        recentsDataList.add(new RecentsData("Bangkok", "Thailand", "$600", R.drawable.thailand_location, 5f));
+        // get recentsDataList from Const.java
         setRecentRecycler(recentsDataList);
 
         // Go to profile
@@ -58,7 +53,25 @@ public class MainActivity extends AppCompatActivity {
         recentRecycler = findViewById(R.id.recent_recycler);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recentRecycler.setLayoutManager(layoutManager);
-        recentsAdapter = new RecentsAdapter(this, recentsDataList);
+        recentsAdapter = new RecentsAdapter(this, recentsDataList, this);
         recentRecycler.setAdapter(recentsAdapter);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        // Log.d("Tag", String.valueOf(recentsDataList.get(position).getPlaceName()));
+        Intent nav_to_location_description = new Intent(MainActivity.this, LocationDescriptionActivity.class);
+
+        // Set location information
+        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("countryName", recentsDataList.get(position).getCountryName());
+        editor.putString("placeName", recentsDataList.get(position).getPlaceName());
+        editor.putString("price", recentsDataList.get(position).getPrice());
+        editor.putFloat("star_rating", recentsDataList.get(position).getStarRating());
+        editor.putInt("imageUrl", recentsDataList.get(position).getImageUrl());
+        editor.apply();
+
+        startActivity(nav_to_location_description);
     }
 }
