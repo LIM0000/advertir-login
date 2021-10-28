@@ -2,28 +2,33 @@ package com.travel.travelmate;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class LocationDescriptionActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
     ImageView location_image, close_button;
-    TextView location_country, location_place, star_rating;
+    TextView location_country, location_place, star_rating, new_covid_cases, total_death_covid;
     AppCompatButton covid_info, travel_restriction;
     ScrollView travel_scroll, covid_scroll;
 
@@ -53,6 +58,9 @@ public class LocationDescriptionActivity extends AppCompatActivity {
             finish();
         });
 
+        // Fetch covid data API
+        fetchData();
+
         // Clicked on covid info or travel restriction
         covid_info = findViewById(R.id.covid_info);
         travel_restriction = findViewById(R.id.travel_restriction);
@@ -79,4 +87,53 @@ public class LocationDescriptionActivity extends AppCompatActivity {
             covid_scroll.setVisibility(View.INVISIBLE);
         });
     }
+
+    // Get new cases and total deaths of covid
+    private void fetchData() {
+
+        new_covid_cases = findViewById(R.id.covid_new_cases);
+        total_death_covid = findViewById(R.id.covid_total_death);
+        String url = "https://coronavirus-monitor.p.rapidapi.com/coronavirus/who_latest_stat_by_country.php?country=" + sharedPreferences.getString("countryName", "");
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("x-rapidapi-host", "coronavirus-monitor.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", "8dff65f1c6msh22f60d5065b4f90p1963e4jsnefd3323d4ace")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                new_covid_cases.setText("error");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if(response.isSuccessful())
+                {
+                    String resp = response.body().string();
+                    LocationDescriptionActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject jsonObject = new JSONObject(resp);
+                                String val1 = jsonObject.getString("newCases");
+                                String val2 = jsonObject.getString("totalDeaths");
+                                new_covid_cases.setText(val1.substring(0, val1.length() - 2));
+                                total_death_covid.setText(val2.substring(0, val2.length() - 2));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+
+
 }

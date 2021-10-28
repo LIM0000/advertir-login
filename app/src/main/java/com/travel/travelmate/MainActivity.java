@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         });
     }
 
+    // Setup RecyclerView
     private void setRecentRecycler(List<RecentsData> recentsDataList)
     {
         recentRecycler = findViewById(R.id.recent_recycler);
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
     }
 
     @Override
+    // Enable the ability to click item in RecyclerView
     public void onItemClick(int position) {
         // Log.d("Tag", String.valueOf(recentsDataList.get(position).getPlaceName()));
         Intent nav_to_location_description = new Intent(MainActivity.this, LocationDescriptionActivity.class);
