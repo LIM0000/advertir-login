@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,6 +50,24 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     AppCompatTextView tvForgot;
 
+    private SharedPreferences getEncryptedSharedPrefs() {
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    Const.SHAREDPREFERENCE,
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            return sharedPreferences;
+        }
+        catch(Exception e) {
+            Log.e("Failed to create encrypted shared prefs", e.toString());
+        }
+        return null;
+    }
+
     private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 1234;
     private GoogleSignInClient mSignInClient;
@@ -63,7 +83,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if there is userId in "sharedPreferences" object
         // If yes, then directly go to MainActivity
-        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        sharedPreferences = getEncryptedSharedPrefs();
+        if(sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        }
         userId = sharedPreferences.getString(UserId, "0");
         if (!TextUtils.equals(userId, "0")) {
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
@@ -125,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
             // Check in firebase database
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
             mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot data : dataSnapshot.getChildren()) {
 

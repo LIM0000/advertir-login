@@ -4,6 +4,8 @@ import static com.travel.travelmate.Const.UserId;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -24,6 +26,25 @@ public class OnBoarding extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     String userId;
 
+
+    private SharedPreferences getEncryptedSharedPrefs() {
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    Const.SHAREDPREFERENCE,
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            return sharedPreferences;
+        }
+        catch(Exception e) {
+            Log.e("Failed to create encrypted shared prefs", e.toString());
+        }
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +52,10 @@ public class OnBoarding extends AppCompatActivity {
 
         // Onboarding page only show once is enough
         // If not yet seen onboard page before
-        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        sharedPreferences = getEncryptedSharedPrefs();
+        if(sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        }
         if(sharedPreferences.getBoolean("seen_onboard", false))
         {
             Intent login_page = new Intent(OnBoarding.this, LoginActivity.class);
