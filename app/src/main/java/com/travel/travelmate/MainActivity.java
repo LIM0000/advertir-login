@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         try {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
             SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
-                    "secret_shared_prefs_file",
+                    Const.SHAREDPREFERENCE,
                     masterKeyAlias,
                     this,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
             return sharedPreferences;
         }
         catch(Exception e) {
-            Log.e("Master Key Alias", e.toString());
+            Log.e("Failed to create encrypted shared prefs", e.toString());
         }
         return null;
     }
