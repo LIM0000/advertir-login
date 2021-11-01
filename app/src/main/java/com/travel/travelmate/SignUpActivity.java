@@ -77,7 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
                 etEmail.setError("This field is empty!");
                 return;
             }
-            if (isValid(mobile)) {
+            if (!isValid(mobile)) {
                 etMobile.setError("the Phone number length should be 10");
                 return;
             }
