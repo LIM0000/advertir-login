@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -34,6 +36,12 @@ public class SignUpActivity extends AppCompatActivity {
     private ContentLoadingProgressBar progressBar;
     private FirebaseAuth mAuth;
 
+
+    private boolean isValid(String mobileNumber) {
+        Pattern mobileValidPattern = Pattern.compile("(0|91)?[7-9][0-9]{9}");
+        Matcher m = mobileValidPattern.matcher(mobileNumber);
+        return (m.find() && m.group().equals(mobileNumber));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,17 +77,15 @@ public class SignUpActivity extends AppCompatActivity {
                 etEmail.setError("This field is empty!");
                 return;
             }
-            if (mobile.length() != 9) {
+            if (!isValid(mobile)) {
                 etMobile.setError("the Phone number length should be 10");
                 return;
-
             }
             if (password.length() < 6) {
                 etPassword.setError("Minimum Length 6");
                 return;
             }
             if (!TextUtils.equals(password, confirm)) {
-
                 etConfirm.setError("Password does not match !");
                 return;
             }
@@ -93,7 +99,6 @@ public class SignUpActivity extends AppCompatActivity {
                             dataSnapshot.getChildren().iterator().hasNext()) {
                         if (UserCount == 0) {
                             Toast.makeText(SignUpActivity.this, "Email already exist!", Toast.LENGTH_LONG).show();
-
                         } else if (UserCount == -1) {
                             UserCount = 0;
                         }
@@ -118,23 +123,17 @@ public class SignUpActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             // Sign in success, update UI with the signed-in user's information
-
                                             FirebaseUser user = mAuth.getCurrentUser();
                                             Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
                                             startActivity(i);
                                             finish();
-
                                         } else {
                                             // If sign in fails, display a message to the user.
                                             //   Log.w(TAG, "createUserWithEmail:failure", task.getException());
-
                                             Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
                                             startActivity(i);
                                             finish();
-
                                         }
-
-
                                     }
                                 });
 
