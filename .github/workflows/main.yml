@@ -10,7 +10,6 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@2.3.1
         with:
-          distribution: 'temurin'
           java-version: '11'
       - name: Build with Gradle
         run: ./gradlew build
