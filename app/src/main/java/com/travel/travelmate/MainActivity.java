@@ -8,15 +8,24 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+import android.util.Log;
 
 import com.travel.travelmate.adapter.RecentsAdapter;
 import com.travel.travelmate.model.RecentsData;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewClickInterface{
 
@@ -27,12 +36,34 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
     RecyclerView recentRecycler;
     RecentsAdapter recentsAdapter;
 
+
+    private SharedPreferences getEncryptedSharedPrefs() {
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    "secret_shared_prefs_file",
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            return sharedPreferences;
+        }
+        catch(Exception e) {
+            Log.e("Master Key Alias", e.toString());
+        }
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvWelcome = findViewById(R.id.tvName);
-        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        sharedPreferences = getEncryptedSharedPrefs();
+        if(sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        }
         name = sharedPreferences.getString(Name, "0");
         tvWelcome.setText("Welcome " + name + ",");
 
@@ -65,7 +96,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         Intent nav_to_location_description = new Intent(MainActivity.this, LocationDescriptionActivity.class);
 
         // Set location information
-        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        sharedPreferences = getEncryptedSharedPrefs();
+        if(sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        }
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("countryName", recentsDataList.get(position).getCountryName());
         editor.putString("placeName", recentsDataList.get(position).getPlaceName());
