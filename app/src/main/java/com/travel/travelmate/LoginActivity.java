@@ -1,5 +1,6 @@
 package com.travel.travelmate;
 
+import static com.travel.travelmate.Const.Name;
 import static com.travel.travelmate.Const.UserId;
 
 import android.content.Intent;
@@ -45,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
     AppCompatButton btnLogin, btnSignUp, btnGoogleLogin;
     AppCompatEditText etEmail, etPassword;
     String email, password, userId;
-    int userType = 0;
     SharedPreferences sharedPreferences;
     private FirebaseAuth mAuth;
     AppCompatTextView tvForgot;
@@ -84,11 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if there is userId in "sharedPreferences" object
         // If yes, then directly go to MainActivity
         sharedPreferences = getEncryptedSharedPrefs();
-        if(sharedPreferences == null) {
-            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
-        }
-        userId = sharedPreferences.getString(UserId, "0");
-        if (!TextUtils.equals(userId, "0")) {
+        if (sharedPreferences.contains(UserId)) {
             Intent main = new Intent(LoginActivity.this, MainActivity.class);
             main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(main);
@@ -157,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
 
                             // This will then used by MainActivity.java
                             // Store userid, mobile and name
-                            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(UserId, user.getUserId());
                             editor.putString(Const.Mobile, user.getMobile());
@@ -236,7 +231,6 @@ public class LoginActivity extends AppCompatActivity {
                     String userId = mDatabase.push().getKey();
                     User user = new User(userId, acct.getGivenName(), acct.getEmail(), "");
                     mDatabase.child(Objects.requireNonNull(userId)).setValue(user);
-                    sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(UserId, userId);
                     editor.putString(Const.Email,acct.getEmail());
