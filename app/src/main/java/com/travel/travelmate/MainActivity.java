@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         setContentView(R.layout.activity_main);
         tvWelcome = findViewById(R.id.tvName);
         sharedPreferences = getEncryptedSharedPrefs();
-        if(sharedPreferences == null) {
-            sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
-        }
         name = sharedPreferences.getString(Name, "0");
         tvWelcome.setText("Welcome " + name + ",");
 
