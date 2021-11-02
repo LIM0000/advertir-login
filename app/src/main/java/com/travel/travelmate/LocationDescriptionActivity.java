@@ -2,10 +2,13 @@ package com.travel.travelmate;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -32,11 +35,29 @@ public class LocationDescriptionActivity extends AppCompatActivity {
     AppCompatButton covid_info, travel_restriction;
     ScrollView travel_scroll, covid_scroll;
 
+    private SharedPreferences getEncryptedSharedPrefs() {
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    Const.SHAREDPREFERENCE,
+                    masterKeyAlias,
+                    this,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+            return sharedPreferences;
+        }
+        catch(Exception e) {
+            Log.e("Failed to create encrypted shared prefs", e.toString());
+        }
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_more_detail);
-        sharedPreferences = getSharedPreferences(Const.SHAREDPREFERENCE, MODE_PRIVATE);
+        sharedPreferences = getEncryptedSharedPrefs();
 
         // Set location description background based on clicked item
         location_image = findViewById(R.id.backgroundImage);

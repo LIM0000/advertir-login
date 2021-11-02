@@ -12,7 +12,6 @@ public class Const {
     public static final String UserId = "useridKey";
     public static final String Email = "emailKey";
     public static final String Name = "nameKey";
-    public static final String UserType = "typeKey";
 
     // Travel information
     // You cannot directly assign in a class, need a method or function
