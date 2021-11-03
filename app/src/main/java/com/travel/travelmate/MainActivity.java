@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewClickInterface{
 
-    AppCompatButton btnProfile;
+    AppCompatButton btnProfile, btnCovid;
     AppCompatTextView tvWelcome;
     SharedPreferences sharedPreferences;
     String name;
@@ -73,6 +73,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewClick
         btnProfile.setOnClickListener(v -> {
             Intent nav_to_profile = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(nav_to_profile);
+        });
+
+        // Go to Covid stat
+        btnCovid = findViewById(R.id.btnCovid);
+        btnCovid.setOnClickListener(v -> {
+            Intent nav_to_profile = new Intent(MainActivity.this, CovidActivity.class);
+            startActivity(nav_to_profile);
+            finish();
         });
     }
 
