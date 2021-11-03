@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TravelMate">
         <activity
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:name=".CovidActivity"
+            android:exported="false" />
+        <activity
             android:name=".LocationDescriptionActivity"
             android:exported="false" />
         <activity
@@ -24,7 +28,9 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".ForgotActivity" />
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".ProfileActivity" />
     </application>
 
