@@ -134,10 +134,11 @@ public class CovidActivity extends AppCompatActivity {
                                 String val2 = jsonObject.getString("newDeaths");
                                 String val3 = jsonObject.getString("totalDeaths");
                                 String val4 = jsonObject.getString("peopleFullyVaccinatedPerHundred");
-                                activeCases.setText(val1.substring(0, val1.length() - 2));
-                                totalDeaths.setText(val3.substring(0, val3.length() - 2));
-                                newDeaths.setText(val2.substring(0, val2.length() - 2));
-                                fullyVaccinated.setText(val4.substring(0, val4.length() - 3));
+
+                                activeCases.setText(val1);
+                                totalDeaths.setText(val3);
+                                newDeaths.setText(val2);
+                                fullyVaccinated.setText(val4);
 
                                 // Set images alpha to 1
                                 active_cases_image_view.animate().alpha(1f).setDuration(1000).setListener(null);
