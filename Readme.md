@@ -29,10 +29,6 @@ gradlew install
 - Covid Stats 
 - Clickable location cards with description
 
-## Assets (Like APK and Source Code)
-(Link the pipeline or the actions that make the build or the releases Eg. https://github.com/MwangiR/advertir-login/releases)
-
-
 ## Screenshots of Application
 <img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114577.png" width="30%" height="30%"/> <img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114686.png" width="30%" height="30%"/> <img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114702.png" width="30%" height="30%"/> 
 
