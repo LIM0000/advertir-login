@@ -2,7 +2,7 @@
 
 [![Android CI](https://github.com/MwangiR/advertir-login/actions/workflows/main.yml/badge.svg)](https://github.com/MwangiR/advertir-login/actions/workflows/main.yml) [![CodeQL](https://github.com/MwangiR/advertir-login/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MwangiR/advertir-login/actions/workflows/codeql-analysis.yml) [![Snyk](https://github.com/yogeshvar/advertir-login/actions/workflows/snyk.yml/badge.svg)](https://github.com/yogeshvar/advertir-login/actions/workflows/snyk.yml)
 
-(A line about our app)
+Mobile travel application that provide user the ability to book travel ticket and obtain covid information in countries around the world.
 
 ## Installation
 Clone this repository and import into **Android Studio**
@@ -10,23 +10,31 @@ Clone this repository and import into **Android Studio**
 git clone https://github.com/MwangiR/advertir-login
 ```
 
-## Configuration
-### Keystores:
-(Add the firebase config if any)
+## Instructions to run the app (Method 1)
+- Click on **Run** button ▶ in **Android Studio**
 
-## Instructions to run the app
+## Instructions to run the app (Method 2)
+1. Move into the cloned directory
+2. Run gradle command to build an apk
+3. Install the apk into virtual device
+```bash
+gradlew build
+gradlew install
+```
 
 ## Basic Features of the App:
-- Firebase login 
+- Onboard page
+- Firebase login authentication
+- Google authentication 
 - Covid Stats 
-- bla bla bla...
+- Clickable location cards with description
 
 ## Assets (Like APK and Source Code)
 (Link the pipeline or the actions that make the build or the releases Eg. https://github.com/MwangiR/advertir-login/releases)
 
 
-## Screenshots of Application (1 or 2)
-
+## Screenshots of Application
+<img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114577.png" width="30%" height="30%"/> <img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114686.png" width="30%" height="30%"/> <img src="https://github.com/MwangiR/advertir-login/blob/master/readme_images/Screenshot_1636114702.png" width="30%" height="30%"/> 
 
 ## Contributing
 
@@ -36,5 +44,4 @@ git clone https://github.com/MwangiR/advertir-login
 4. Run the linter (ruby lint.rb').
 5. Push your branch (git push origin my-new-feature)
 6. Create a new Pull Request
-
 
